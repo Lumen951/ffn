@@ -26,27 +26,41 @@ urls = { Homepage = "https://github.com/google/ffn" }
 # Dependencies of the TensorFlow training and inference path.
 dependencies = [
   "absl-py>=0.1.4",
+  # No Windows wheels (Linux/macOS only). ffn/input/volume.py imports it at
+  # module level, so that module -- and ffn/jax/input_pipeline.py, which imports
+  # it -- cannot be imported on Windows.
+  "array-record; sys_platform != 'win32'",
   "connectomics",
   "edt>=2.3.0",
+  "gin-config",
   "h5py>=2.7.0",
   "numpy>=1.11.1",
   "pandas",
   "Pillow>=5.3.0",
-  "protobuf",
+  # Must be at least the protoc release that generated the checked-in *_pb2.py
+  # files; protobuf enforces this at import time. Regenerate them with:
+  #   uv run --with grpcio-tools python -m grpc_tools.protoc -I. --python_out=. \
+  #     ffn/utils/vector.proto ffn/utils/bounding_box.proto \
+  #     ffn/inference/inference.proto ffn/inference/consensus.proto \
+  #     ffn/inference/resegmentation.proto
+  "protobuf>=7.35.1",
   "psutil",
   "scikit-image>=0.11.0",
   "scipy>=0.15.1",
   "tensorflow>=1.4.0",
   "tensorstore>=0.1.40",
   "tf-slim>=1.1.0",
-  # Imported as `tf` by ffn/training/augmentation.py.
-  "transformations",
 ]
-# Deliberately not declared: `multidim-image-augmentation` (imported by
-# ffn/training/augmentation.py) only ships cp37/cp38 wheels, so it cannot be
-# resolved for Python 3.11. That module is unusable in this snapshot anyway --
-# it also imports the Google-internal `tensorflow.google.compat.v1`. Re-add the
-# dependency if you build it from source or run on Python 3.8.
+# Deliberately not declared -- imports that no public package satisfies. Both
+# are only used by modules that cannot run from this snapshot regardless, since
+# those modules also import Google-internal packages.
+#   * multidim-image-augmentation (ffn/training/augmentation.py): ships cp37/
+#     cp38 wheels only, so it cannot resolve for Python 3.11. Build it from
+#     source, or use Python 3.8.
+#   * a top-level module named `tf` exposing `transformations` (same file):
+#     `from tf import transformations` requires a module called `tf`. The PyPI
+#     `transformations` package provides a module named `transformations`, so it
+#     does not satisfy this import.
 
 [project.optional-dependencies]
 # JAX/Flax training: ffn/jax/ and ffn/secgan/.
