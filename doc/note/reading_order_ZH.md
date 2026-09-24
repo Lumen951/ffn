@@ -53,7 +53,7 @@
 
 > **容易卡住的坑**
 >
-> 你会到处看到 `from connectomics.common import bounding_box`。`connectomics` **不在这个仓库里**，它是 [requirements.txt:5](../../requirements.txt#L5) 声明的外部 pip 包（Google 的 connectomics 库）。`bounding_box`、`segmentation.labels`、`jax.training` 都来自那里。不要在本地仓库里 grep 半天找不到。
+> 你会到处看到 `from connectomics.common import bounding_box`。`connectomics` **不在这个仓库里**，它是 [pyproject.toml](../../pyproject.toml) 声明的外部 pip 包（Google 的 connectomics 库）。`bounding_box`、`segmentation.labels`、`jax.training` 都来自那里。不要在本地仓库里 grep 半天找不到。
 
 ### 第 2 层：模型本体（最短，但最重要）
 

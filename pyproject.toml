@@ -1,3 +1,91 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ffn"
+version = "0.1.0"
+description = "Flood-Filling Networks for volumetric instance segmentation"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Michal Januszewski", email = "mjanusz@google.com" }]
+keywords = [
+  "connectomics",
+  "electron microscopy",
+  "flood-filling networks",
+  "segmentation",
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Image Processing",
+]
+urls = { Homepage = "https://github.com/google/ffn" }
+
+# Dependencies of the TensorFlow training and inference path.
+dependencies = [
+  "absl-py>=0.1.4",
+  "connectomics",
+  "edt>=2.3.0",
+  "h5py>=2.7.0",
+  "numpy>=1.11.1",
+  "pandas",
+  "Pillow>=5.3.0",
+  "protobuf",
+  "psutil",
+  "scikit-image>=0.11.0",
+  "scipy>=0.15.1",
+  "tensorflow>=1.4.0",
+  "tensorstore>=0.1.40",
+  "tf-slim>=1.1.0",
+  # Imported as `tf` by ffn/training/augmentation.py.
+  "transformations",
+]
+# Deliberately not declared: `multidim-image-augmentation` (imported by
+# ffn/training/augmentation.py) only ships cp37/cp38 wheels, so it cannot be
+# resolved for Python 3.11. That module is unusable in this snapshot anyway --
+# it also imports the Google-internal `tensorflow.google.compat.v1`. Re-add the
+# dependency if you build it from source or run on Python 3.8.
+
+[project.optional-dependencies]
+# JAX/Flax training: ffn/jax/ and ffn/secgan/.
+jax = [
+  "clu",
+  "etils",
+  "flax",
+  "jax>=0.2.25",
+  "jmp",
+  "ml_collections",
+  "optax",
+  "orbax-checkpoint",
+]
+# Deliberately not declared: `t5x`, imported by ffn/jax/train.py for dataset
+# checkpointing. Its PyPI release (0.0.0) was yanked, and the GitHub
+# distribution pulls flax/optax/seqio/clu from git HEAD, which requires
+# Python>=3.12 -- incompatible with the 3.11 pin above. Install it separately
+# on a 3.12+ environment if you need that interop:
+#   uv pip install "t5x @ git+https://github.com/google-research/t5x"
+# ffn/utils/proofreading.py.
+proofreading = ["neuroglancer", "networkx"]
+# ffn/inference/inference.py imports IPython lazily for interactive display.
+interactive = ["ipython"]
+dev = ["flake8", "pyink", "pytest"]
+
+[tool.setuptools.packages.find]
+# `namespaces = true` (the default) is what picks up ffn/input and ffn/jax,
+# which have no __init__.py.
+include = ["ffn*"]
+
+[tool.setuptools]
+# Top-level scripts that setup.py used to install via `scripts=[...]`.
+py-modules = [
+  "build_coordinates",
+  "compute_partitions",
+  "run_inference",
+  "train",
+]
+
 [tool.pyink]
 line-length = 80
 preview = true

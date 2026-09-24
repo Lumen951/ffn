@@ -13,11 +13,13 @@ Flood-Filling Networks（FFN，泛洪填充网络）是一类神经网络，专�
 
 # 安装
 
-无需安装。安装必要的依赖，请运行：
+无需安装。依赖声明在 `pyproject.toml` 中，版本锁定在 `uv.lock` 中。安装依赖请运行：
 
 ```shell
-  pip install -r requirements.txt
+  uv sync
 ```
+
+可选依赖组以 extra 形式提供：`--extra jax`（JAX/Flax 训练代码）、`--extra proofreading`、`--extra interactive`、`--extra dev`。
 
 代码已在配备 Tesla P100 GPU 的 Ubuntu 16.04.3 LTS 系统上测试通过。
 

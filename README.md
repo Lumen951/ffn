@@ -13,11 +13,16 @@ This is not an official Google product.
 
 # Installation
 
-No installation is required. To install the necessary dependencies, run:
+No installation is required. Dependencies are declared in `pyproject.toml`
+and pinned in `uv.lock`. To install them, run:
 
 ```shell
-  pip install -r requirements.txt
+  uv sync
 ```
+
+Optional dependency groups are available as extras: `--extra jax` for the
+JAX/Flax training code, `--extra proofreading`, `--extra interactive`, and
+`--extra dev`.
 
 The code has been tested on an Ubuntu 16.04.3 LTS system equipped with a
 Tesla P100 GPU.
